@@ -5,6 +5,8 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import matplotlib.pyplot as plt
+
 # load mnist dataset
 use_cuda = torch.cuda.is_available()
 
@@ -105,14 +107,33 @@ def test(network):
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
 
+def plot_data(example_data):
+    fig = plt.figure()
+        for i in range(6):
+            plt.subplot(2,3,i+1)
+            plt.tight_layout()
+            plt.imshow(example_data[i][0], cmap='gray', interpolation='none')
+            plt.title("Ground Truth: {}".format(example_targets[i]))
+            plt.xticks([])
+            plt.yticks([])
+        fig
+
 train_losses = []
 train_counter = []
 test_losses = []
 test_counter= []
 
 def main():
+    
+    
+    
     train_loader, test_loader = download_data()
     
+    examples = enumerate(test_loader)
+    batch_idx, (example_data, example_targets) = next(examples)
+    example_data.shape
+    plot_data(example_data)
+
     train_losses = []
     train_counter = []
     test_losses = []
@@ -122,6 +143,8 @@ def main():
         train(epoch, network)
         test(network)
 
+    
+    
     #demonstrate continuing where it had left off
     # continued_network = Net()
     # continued_optimizer = optim.SGD(network.parameters(), lr=learning_rate,
