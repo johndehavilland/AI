@@ -107,7 +107,7 @@ def test(network):
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
 
-def plot_data(example_data):
+def plot_data(example_data, example_targets):
     fig = plt.figure()
     for i in range(6):
         plt.subplot(2,3,i+1)
@@ -130,7 +130,7 @@ def main():
     examples = enumerate(test_loader)
     batch_idx, (example_data, example_targets) = next(examples)
     example_data.shape
-    plot_data(example_data)
+    plot_data(example_data,example_targets)
 
     train_losses = []
     train_counter = []
