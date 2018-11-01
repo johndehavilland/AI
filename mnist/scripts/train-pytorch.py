@@ -119,7 +119,7 @@ def main():
         test(args, model, device, test_loader)
 
     os.makedirs('outputs', exist_ok=True)
-    torch.save(model, os.path.join('outputs', 'model.pt'))
+    torch.save(model, 'outputs/pytorch_model.pt')
 
 if __name__ == '__main__':
     main()

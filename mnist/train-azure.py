@@ -1,10 +1,10 @@
 import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
+# import matplotlib
+# import matplotlib.pyplot as plt
 import os
 import urllib.request
 from azureml.train.dnn import PyTorch
-from utils import load_data
+# from utils import load_data
 
 
 import azureml
@@ -12,7 +12,7 @@ from azureml.core import Workspace, Run
 from azureml.core import Experiment
 from azureml.core.compute import ComputeTarget, BatchAiCompute
 from azureml.core.compute_target import ComputeTargetException
-from sklearn.linear_model import LogisticRegression
+# from sklearn.linear_model import LogisticRegression
 
 from azureml.train.estimator import Estimator
 
@@ -165,13 +165,13 @@ def run_azure_pytorch():
 
     compute_target = setup_azure_gpu()
 
-    experiment_name = 'pytorch-mnist'
+    experiment_name = 'pytorch'
     exp = Experiment(workspace=ws, name=experiment_name)
 
     ds = ws.get_default_datastore()
     print(ds.datastore_type, ds.account_name, ds.container_name)
 
-    ds.upload(src_dir='./data', target_path='mnist', overwrite=True, show_progress=True)
+    # ds.upload(src_dir='./data', target_path='mnist', overwrite=True, show_progress=True)
     
     script_params = {
         '--data_dir': ds
@@ -190,7 +190,7 @@ def run_azure_pytorch():
     print(run.get_file_names())
 
     # register model 
-    model = run.register_model(model_name=experiment_name, model_path='outputs/pytorch_mnist_model.pkl')
+    model = run.register_model(model_name=experiment_name, model_path='outputs/pytorch_model.pt')
     print(model.name, model.id, model.version, sep = '\t')
     #compute_target.delete()
 
