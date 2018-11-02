@@ -30,9 +30,10 @@ def create_config():
 
 def deploy(aciconfig, envfile, name, model):
     # configure the image
-    image_config = ContainerImage.image_configuration(execution_script="./score-pytorch.py", 
+    image_config = ContainerImage.image_configuration(execution_script="./score-pytorch-test.py", 
                                                     runtime="python", 
-                                                    conda_file=envfile)
+                                                    conda_file=envfile,
+                                                    dependencies=["./score/"])
 
     service = Webservice.deploy_from_model(workspace=ws,
                                         name=name,

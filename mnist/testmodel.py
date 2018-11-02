@@ -1,46 +1,31 @@
+import argparse
+import base64
+import json
+import os
+import urllib.request
+from io import BytesIO
+
+import numpy as np
 from azureml.core import Workspace
 from azureml.core.model import Model
 
-import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torchvision.transforms.functional as Fun
-from torch.autograd import Variable
-
-import numpy as np
 import torch.optim as optim
-from torchvision import datasets, transforms
-import os
-import json
-import base64
-from io import BytesIO
+import torchvision.transforms.functional as Fun
 from PIL import Image
-import urllib.request
+from torch.autograd import Variable
+from torchvision import datasets, transforms
+from utils import load_data
+from score import Net
 
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.conv2_drop = nn.Dropout2d()
-        self.fc1 = nn.Linear(320, 50)
-        self.fc2 = nn.Linear(50, 10)
+# model.download(target_dir = '.', exists_ok = True)
 
-    def forward(self, x):
-        x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
-        x = x.view(-1, 320)
-        x = F.relu(self.fc1(x))
-        x = F.dropout(x, training=self.training)
-        x = self.fc2(x)
-        return F.log_softmax(x, dim=1)
 
 ws = Workspace.from_config()
 
 model=Model(ws, 'pytorch')
-# model.download(target_dir = '.', exists_ok = True)
-import os 
 # verify the downloaded model file
 os.stat('./pytorch_model.pt')
 
@@ -52,7 +37,6 @@ os.stat('./pytorch_model.pt')
 # urllib.request.urlretrieve('http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz', filename='./data/test-images.gz')
 # urllib.request.urlretrieve('http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz', filename='./data/test-labels.gz')
 
-from utils import load_data
 X_test = load_data('./data/test-images.gz', False) / 255.0
 y_test = load_data('./data/test-labels.gz', True).reshape(-1)
 
@@ -79,13 +63,6 @@ def preprocess_image(data):
     data = data.unsqueeze(1)
     print(data.shape)
     return data  #assumes that you're using GPU
-
-def init():
-    global model
-    # retreive the path to the model file using the model name
-    model_path = Model.get_model_path('pytorch_mnist')
-    model = torch.load(model_path, map_location=lambda storage, loc: storage)
-    model.eval()
 
 def run(img):
     # img = base64ToImg(json.loads(input_data)['data'])
