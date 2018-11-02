@@ -8,6 +8,7 @@ from torchvision import datasets, transforms
 import os
 
 from azureml.core.run import Run
+
 # get the Azure ML run object
 run = Run.get_context()
 

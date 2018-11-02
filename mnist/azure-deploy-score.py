@@ -13,7 +13,7 @@ def create_env():
     myenv = CondaDependencies()
     myenv.add_conda_package("pytorch")
     myenv.add_conda_package("numpy")
-    myenv.add_conda_package("torchvision")
+    myenv.add_conda_package("torchvision=0.4.1")
 
     with open("./myenv.yml","w") as f:
         f.write(myenv.serialize_to_string())
@@ -30,10 +30,9 @@ def create_config():
 
 def deploy(aciconfig, envfile, name, model):
     # configure the image
-    image_config = ContainerImage.image_configuration(execution_script="./score-pytorch-test.py", 
+    image_config = ContainerImage.image_configuration(execution_script="./score.py", 
                                                     runtime="python", 
-                                                    conda_file=envfile,
-                                                    dependencies=["./score/"])
+                                                    conda_file=envfile)
 
     service = Webservice.deploy_from_model(workspace=ws,
                                         name=name,
@@ -44,8 +43,6 @@ def deploy(aciconfig, envfile, name, model):
     service.wait_for_deployment(show_output=True)
 
     print(service.scoring_uri)
-
-
 
 if __name__ == '__main__':
     name = "pytorch-mnist-svc"
